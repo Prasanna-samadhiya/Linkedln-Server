@@ -83,7 +83,7 @@ const UserRegister = async (req: AuthenticatedRequest, res: Response, next: Next
     const token = jwt.sign(payload, process.env.SECRET as string, { expiresIn: 86400 });
 
     return res
-      .cookie("linkedlntoken", token, {  maxAge: 2 * 60 * 60 * 1000 })
+      .cookie("linkedln", token, {  maxAge: 2 * 60 * 60 * 1000 })
       .status(200)
       .json({
         message: "User Registered successfully",

@@ -1,5 +1,4 @@
 import mongoose, { mongo } from "mongoose";
-import { Schema, Document } from "mongoose";
 
 interface ILike extends mongoose.Document {
     postid: mongoose.Types.ObjectId

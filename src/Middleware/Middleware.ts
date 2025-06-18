@@ -1,10 +1,10 @@
-import { NextFunction, Request } from "express";
+import { NextFunction, Request,Response } from "express";
 import { ErrorHandler, UndefinedHandler } from "../Utils/Utilities";
 import  jwt, { JwtPayload }  from "jsonwebtoken";
 import User from "../Modals/UserModal";
 
 //Using interface for adding user to the request object
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
   user?: any;
 }
 

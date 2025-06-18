@@ -68,7 +68,6 @@ export const updateProfileImage = async (req: Request, res: Response, next: Next
     }
   }
 
-    // Update DB with new image URL
     console.log(newImageUrl)
     user!.image = newImageUrl;
     await user!.save();

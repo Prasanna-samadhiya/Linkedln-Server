@@ -8,6 +8,11 @@ export interface IUserPopulated {
   image: string;
 }
 
+interface IComment {
+  id: mongoose.Types.ObjectId;
+  message: string;
+}
+
 export interface IPostWithUser {
   _id: mongoose.Types.ObjectId;
   userid: IUserPopulated; 
@@ -21,9 +26,8 @@ interface IPost extends mongoose.Document {
     userid: IPostWithUser
     image: string[];
     likes: mongoose.Types.ObjectId[];
-    dislikes: mongoose.Types.ObjectId[];
-    comments: [{id:mongoose.ObjectId,message:string}]
-
+    comments: IComment[]
+    Repost: mongoose.Types.ObjectId;
 }
 
 const PostSchema = new mongoose.Schema<IPost>({
@@ -33,19 +37,20 @@ const PostSchema = new mongoose.Schema<IPost>({
     },
     userid:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required: true
     },
     image:[ {
         type: String,
     }],
     likes: [{
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     }],
-    dislikes: [{
-        type: mongoose.Schema.Types.ObjectId
+    Repost: [{
+        type: mongoose.Schema.Types.ObjectId,
     }],
-    comments:[ {
-        id: {
+    comments: [{ id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
@@ -53,7 +58,7 @@ const PostSchema = new mongoose.Schema<IPost>({
             type: String
         }
     }]
-});
+},{timestamps:true});
 
 const Post = mongoose.model<IPost>('Post', PostSchema);
 export default Post;

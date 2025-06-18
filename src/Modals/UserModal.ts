@@ -87,7 +87,8 @@ const UserSchema = new mongoose.Schema<IUser>({
     }
     ,
     connections: [{
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     }],
     isverified: {
         type: Boolean,
@@ -106,7 +107,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     description: {
         type: String
     }
-});
+},{timestamps:true});
 
 UserSchema.pre<IUser>('save', async function (next) {
     if (!this.isModified('password')) {

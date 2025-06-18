@@ -3,8 +3,10 @@ import { ErrorHandler, UndefinedHandler } from "../../Utils/Utilities";
 import userModel from "../../Modals/UserModal";
 import jwt from "jsonwebtoken"
 import { getSignedUrlForFile } from "../../Utils/S3services";
+import dotenv from 'dotenv';
+dotenv.config();
 
-const GetAllUsers = async (req: Request, res: Response) => {
+const GetAllUsersByPage = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
@@ -30,6 +32,34 @@ const GetAllUsers = async (req: Request, res: Response) => {
   }
 
 };
+
+const GetAllUsers = async(req:Request,res:Response,next:NextFunction)=>{
+
+   try{
+
+      const Users = await userModel.find();
+
+      if(Users.length==0){
+         return next(ErrorHandler(res,"Unable to find users",401));
+      }
+
+      const newUsers = await Promise.all(Users.map(async(ele,index,arr)=>{
+         const key = ele.image.split("/").slice(3).join("/");
+         ele.image = await getSignedUrlForFile(key);
+         return ele
+      }));
+
+      res.status(200).json({
+        success:true,
+        message:"User fetched successfully",
+        newUsers
+      })
+
+   }catch(err){
+       return next(UndefinedHandler(res,"Server Error",500));
+   }
+
+}
 
 
 const UpdateUser = async (req: Request, res: Response) => {
@@ -77,15 +107,14 @@ const GetOneUser = async (req: Request, res: Response) => {
 
 
 const UserData = async (req: Request, res: Response, next: NextFunction) => {
-  const {authtoken}  = req.body;
-  console.log("token:", authtoken)
-  if (!authtoken) {
+  const {linkedln}  = req.cookies;
+  console.log("token:", linkedln)
+  if (!linkedln) {
     return next(UndefinedHandler(res, "User not logged in yet", 401))
   }
 
   try {
-    //typecasting process.env.SECRET to string
-    const decoded = jwt.verify(authtoken, "prasanna") as {id:string};
+    const decoded = jwt.verify(linkedln, process.env.SECRET as string) as {id:string};
     console.log(decoded);
 
     const result = await userModel.findById(decoded.id);
@@ -114,19 +143,20 @@ const UserData = async (req: Request, res: Response, next: NextFunction) => {
       token: token,
       presignedurl: presignedurl
     })
-  } catch (err) {
-    return next(ErrorHandler(res, "Invalid or expired token", 500))
+  } catch (err:any) {
+    console.log(err);
+    return next(ErrorHandler(res, `Invalid or expired token:${err.message}`, 500));
   }
 };
 
 const updateFrameStatus = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { frame } = req.body; // 'open', 'hiring', or 'none'
+  const { status } = req.body; 
 
   try {
     const user = await userModel.findByIdAndUpdate(
       id,
-      {status: frame },
+      {status: status },
       { new: true }
     );
 
@@ -141,4 +171,4 @@ const updateFrameStatus = async (req: Request, res: Response) => {
 };
 
 
-export { GetAllUsers, GetOneUser, UpdateUser ,UserData,updateFrameStatus}
+export { GetAllUsers, GetOneUser, UpdateUser ,UserData,updateFrameStatus,GetAllUsersByPage}
