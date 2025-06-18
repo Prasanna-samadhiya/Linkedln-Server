@@ -6,7 +6,7 @@ import { S3Client } from "@aws-sdk/client-s3";
 dotenv.config()
 
 const DBconnect=async()=>{
-    await mongoose.connect(process.env.URI as string).then(
+    await mongoose.connect(process.env.URL as string).then(
     ()=>{console.log("DB connected")
 }).catch((err:any)=>{
     console.log(err)
