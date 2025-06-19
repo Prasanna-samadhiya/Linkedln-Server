@@ -26,17 +26,12 @@ const UndefinedHandler = (res: Response, message: string, statuscode: number) =>
     });
 }
 
-const SendMail = async (
-  from: string,
-  to: string,
-  subject: string,
-  html: string
-): Promise<void> => {
+const SendMail = async (from: string,to: string,subject: string,html: string): Promise<void> => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: "prasannasamadhiya035@gmail.com",
-      pass: process.env.PASS
+      pass: "ccfz qddr jpkn tvmn"
     }
   });
 

@@ -19,13 +19,7 @@ const GetAllUsersByPage = async (req: Request, res: Response) => {
       return ErrorHandler(res, "No users found", 404);
     }
 
-    return res.status(200).json({
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-      data: users,
-    });
+    return res.status(200).json({page,limit,total,totalPages: Math.ceil(total / limit),data: users});
   } catch (err) {
     console.log(err);
     return UndefinedHandler(res, "Server Error", 500);
