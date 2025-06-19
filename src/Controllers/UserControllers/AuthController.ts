@@ -124,7 +124,7 @@ const UserLogin = async (req: Request, res: Response,next:NextFunction) => {
     const token = jwt.sign(payload, process.env.SECRET as string, { expiresIn: 86400 });
     
     return res
-      .cookie("linkedln", token, { maxAge: 2 * 60 * 60 * 1000 }) 
+      .cookie("linkedln", token, { secure:true,maxAge: 2 * 60 * 60 * 1000 }) 
       .status(200)
       .json({
         message: "Logged in successfully",
